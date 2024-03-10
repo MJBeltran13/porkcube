@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import tkinter as tk
+from PIL import Image, ImageTk
 
 def get_L_star(image):
     # converting the pork image to L*a*b* color space
@@ -14,22 +16,32 @@ def get_L_star(image):
     return L_mean
 
 def main():
-    # initializing the webcam (secondary)
-    cap = cv2.VideoCapture(1)
+    # Load the image
+    image = cv2.imread('pork2.png')
     
-    print("Press any key to capture the frame...")
-    cv2.waitKey(0)
+    # Create Tkinter window
+    root = tk.Tk()
+    root.title("L* Value")
     
-    # capturing a single frame and getting L*
-    ret, frame = cap.read()
-    cv2.imshow('Frame', frame)
-    L_star = get_L_star(frame)
-    print("L* value:", L_star)
+    # Convert image to RGB format
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    img = Image.fromarray(image)
+    imgtk = ImageTk.PhotoImage(image=img)
     
-    # closing all windows after 10 seconds
-    cv2.waitKey(10000)
-    cap.release()
-    cv2.destroyAllWindows()
+    # Display image on Tkinter window
+    label = tk.Label(root, image=imgtk)
+    label.pack()
+    
+    # Get L* value
+    L_star = get_L_star(image)
+    l_label = tk.Label(root, text="L* value: {:.2f}".format(L_star))
+    l_label.pack()
+    
+    # Close the window when a key is pressed
+    button = tk.Button(root, text="Close", command=root.destroy)
+    button.pack()
+    
+    root.mainloop()
 
 if __name__ == "__main__":
     main()
